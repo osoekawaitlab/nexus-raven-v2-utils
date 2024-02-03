@@ -172,6 +172,6 @@ User Query: {{user_query}}"""
                 self._return_type: The return value.
             \"\"\"
         <BLANKLINE>
-        User Query: pass foo to a string 'bar'
+        User Query: pass foo to a string 'bar'<human_end>
         """  # noqa: E501
-        return self.format(user_query)
+        return f"{self.format(user_query)}<human_end>"
