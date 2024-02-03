@@ -101,8 +101,77 @@ class PromptTemplate:
         self._functions = functions
 
     def __str__(self) -> str:
+        """
+        Return the string representation of the prompt template.
+
+        Returns:
+            str: The string representation of the prompt template.
+
+        >>> print(str(PromptTemplate([Function("foo", "The foo function.", [Argument("a", int, "The first argument.")], str, "The return value.")])))
+        Function:
+        def foo(a: int) -> The return value.:
+            \"\"\"
+            The foo function.
+        <BLANKLINE>
+            Args:
+                a (int): The first argument.
+        <BLANKLINE>
+            Returns:
+                self._return_type: The return value.
+            \"\"\"
+        <BLANKLINE>
+        User Query: {user_query}
+        """  # noqa: E501
         return f"""{chr(10).join([str(function) for function in self._functions])}
 User Query: {{user_query}}"""
 
     def format(self, user_query: str) -> str:
+        """
+        Return the formatted string representation of the prompt template.
+
+        Args:
+            user_query (str): The user query.
+
+        Returns:
+            str: The formatted string representation of the prompt template.
+
+        >>> print(PromptTemplate([Function("foo", "The foo function.", [Argument("a", int, "The first argument.")], str, "The return value.")]).format("pass foo to a string 'bar'"))
+        Function:
+        def foo(a: int) -> The return value.:
+            \"\"\"
+            The foo function.
+        <BLANKLINE>
+            Args:
+                a (int): The first argument.
+        <BLANKLINE>
+            Returns:
+                self._return_type: The return value.
+            \"\"\"
+        <BLANKLINE>
+        User Query: pass foo to a string 'bar'
+        """  # noqa: E501
         return self.__str__().format(user_query=user_query)
+
+    def render(self, user_query: str) -> str:
+        """
+        Render the formatted string representation of the prompt template.
+
+        Args:
+            user_query (str): The user query.
+
+        >>> print(PromptTemplate([Function("foo", "The foo function.", [Argument("a", int, "The first argument.")], str, "The return value.")]).render("pass foo to a string 'bar'"))
+        Function:
+        def foo(a: int) -> The return value.:
+            \"\"\"
+            The foo function.
+        <BLANKLINE>
+            Args:
+                a (int): The first argument.
+        <BLANKLINE>
+            Returns:
+                self._return_type: The return value.
+            \"\"\"
+        <BLANKLINE>
+        User Query: pass foo to a string 'bar'
+        """  # noqa: E501
+        return self.format(user_query)
