@@ -2,6 +2,78 @@ from collections.abc import Sequence
 from typing import Any, Type
 
 
+class BaseError(Exception):
+    pass
+
+
+class ParseError(BaseError, ValueError):
+    pass
+
+
+class Output:
+    def __init__(self, call: str, thought: str) -> None:
+        self._call = call
+        self._thought = thought
+
+    def __str__(self) -> str:
+        """
+        Return the string representation of the output.
+
+        Returns:
+            str: The string representation of the output.
+
+        >>> print(str(Output(call="add(1, 1)", thought='The function call `add(1, 1)` answers the question "What is 1 plus 1?" by adding 1 and 1.')))
+        Output(call='add(1, 1)', thought='The function call `add(1, 1)` answers the question "What is 1 plus 1?" by adding 1 and 1.')
+        """  # noqa: E501
+        return f"Output(call='{self._call}', thought='{self._thought}')"
+
+    def __repr__(self) -> str:
+        """
+        Return the string representation of the output.
+
+        Returns:
+            str: The string representation of the output.
+
+        >>> print(repr(Output(call="add(1, 1)", thought='The function call `add(1, 1)` answers the question "What is 1 plus 1?" by adding 1 and 1.')))
+        Output(call='add(1, 1)', thought='The function call `add(1, 1)` answers the question "What is 1 plus 1?" by adding 1 and 1.')
+        """  # noqa: E501
+        return self.__str__()
+
+    @classmethod
+    def parse(cls, output: str) -> "Output":
+        """
+        Parse the output from LLM.
+
+        Args:
+            output (str): The output from LLM.
+
+        Returns:
+            Output: The parsed output.
+
+        >>> Output.parse('Call: add (a=1, b=1) \\nThought: The function call `add (a=1, b=1) ` answers the question "What is 1 plus 1?" because it passes the values 1 and 1 to the `add` function, which adds them together and returns the result.\\n\\nThe `add` function takes two integer arguments, `a` and `b`, and returns their sum. In this case, the function is called with the values `a=1` and `b=1`, which means the function will return the sum of 1 and 1, which is 2.\\n\\nTherefore, the function call `add (a=1, b=1) ` answers the question "What is 1 plus 1?" by returning the value 2, which is the result of adding 1 and 1 together.')
+        Output(call='add (a=1, b=1)', thought='The function call `add (a=1, b=1) ` answers the question "What is 1 plus 1?" because it passes the values 1 and 1 to the `add` function, which adds them together and returns the result.
+        <BLANKLINE>
+        The `add` function takes two integer arguments, `a` and `b`, and returns their sum. In this case, the function is called with the values `a=1` and `b=1`, which means the function will return the sum of 1 and 1, which is 2.
+        <BLANKLINE>
+        Therefore, the function call `add (a=1, b=1) ` answers the question "What is 1 plus 1?" by returning the value 2, which is the result of adding 1 and 1 together.')
+        """  # noqa: E501
+        chunks = output.split(chr(10))
+        call = ""
+        thought = ""
+        call_end = False
+        for chunk in chunks:
+            if chunk.startswith("Thought: "):
+                call_end = True
+                thought += chunk[len("Thought: ") :]
+            elif call_end:
+                thought += f"\n{chunk}"
+            elif chunk.startswith("Call: "):
+                call += chunk[len("Call: ") :]
+            else:
+                call += f"\n{chunk}"
+        return cls(call=call.strip(), thought=thought)
+
+
 class Argument:
     def __init__(self, name: str, type: Type[Any], description: str, default: Any = None) -> None:
         self._name = name
