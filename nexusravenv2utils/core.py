@@ -1,6 +1,8 @@
 from collections.abc import Sequence
 from typing import Any, Type
 
+from pydantic import BaseModel as PydanticBaseModel
+
 
 class BaseError(Exception):
     pass
@@ -10,10 +12,12 @@ class ParseError(BaseError, ValueError):
     pass
 
 
-class Output:
-    def __init__(self, call: str, thought: str) -> None:
-        self._call = call
-        self._thought = thought
+class BaseModel(PydanticBaseModel): ...
+
+
+class Output(BaseModel):
+    call: str
+    thought: str
 
     def __str__(self) -> str:
         """
@@ -25,7 +29,7 @@ class Output:
         >>> print(str(Output(call="add(1, 1)", thought='The function call `add(1, 1)` answers the question "What is 1 plus 1?" by adding 1 and 1.')))
         Output(call='add(1, 1)', thought='The function call `add(1, 1)` answers the question "What is 1 plus 1?" by adding 1 and 1.')
         """  # noqa: E501
-        return f"Output(call='{self._call}', thought='{self._thought}')"
+        return f"Output(call='{self.call}', thought='{self.thought}')"
 
     def __repr__(self) -> str:
         """
