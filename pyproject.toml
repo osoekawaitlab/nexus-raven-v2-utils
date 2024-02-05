@@ -25,6 +25,7 @@ classifiers = [
 ]
 
 dependencies = [
+    "pydantic",
 ]
 
 [project.urls]
