@@ -1,5 +1,5 @@
 from collections.abc import Sequence
-from typing import Any, Type
+from typing import Any, Optional, Type
 
 from pydantic import BaseModel as PydanticBaseModel
 
@@ -78,12 +78,11 @@ class Output(BaseModel):
         return cls(call=call.strip(), thought=thought)
 
 
-class Argument:
-    def __init__(self, name: str, type: Type[Any], description: str, default: Any = None) -> None:
-        self._name = name
-        self._type = type
-        self._description = description
-        self._default = default
+class Argument(BaseModel):
+    name: str
+    type: Type[Any]
+    description: str
+    default: Optional[Any] = None
 
     def __str__(self) -> str:
         """
@@ -92,15 +91,15 @@ class Argument:
         Returns:
             str: The string representation of the argument.
 
-        >>> str(Argument("a", int, "The first argument."))
+        >>> str(Argument(name="a", type=int, description="The first argument."))
         'a (int): The first argument.'
-        >>> str(Argument("b", int, "The second argument.", 1))
+        >>> str(Argument(name="b", type=int, description="The second argument.", default=1))
         'b (:obj:`int`, optional): The second argument.'
         """
-        if self._default is None:
-            return f"{self._name} ({self._type.__name__}): {self._description}"
+        if self.default is None:
+            return f"{self.name} ({self.type.__name__}): {self.description}"
         else:
-            return f"{self._name} (:obj:`{self._type.__name__}`, optional): {self._description}"
+            return f"{self.name} (:obj:`{self.type.__name__}`, optional): {self.description}"
 
     @property
     def signature(self) -> str:
@@ -110,15 +109,15 @@ class Argument:
         Returns:
             str: The signature of the argument.
 
-        >>> Argument("a", int, "The first argument.").signature
+        >>> Argument(name="a", type=int, description="The first argument.").signature
         'a: int'
-        >>> Argument("b", int, "The second argument.", 1).signature
+        >>> Argument(name="b", type=int, description="The second argument.", default=1).signature
         'b: int = 1'
         """
-        if self._default is None:
-            return f"{self._name}: {self._type.__name__}"
+        if self.default is None:
+            return f"{self.name}: {self.type.__name__}"
         else:
-            return f"{self._name}: {self._type.__name__} = {self._default}"
+            return f"{self.name}: {self.type.__name__} = {self.default}"
 
 
 class Function:
@@ -143,7 +142,7 @@ class Function:
         Returns:
             str: The string representation of the function.
 
-        >>> print(str(Function("foo", "The foo function.", [Argument("a", int, "The first argument.")], str, "The return value.")))
+        >>> print(str(Function("foo", "The foo function.", [Argument(name="a", type=int, description="The first argument.")], str, "The return value.")))
         Function:
         def foo(a: int) -> The return value.:
             \"\"\"
@@ -183,7 +182,7 @@ class PromptTemplate:
         Returns:
             str: The string representation of the prompt template.
 
-        >>> print(str(PromptTemplate([Function("foo", "The foo function.", [Argument("a", int, "The first argument.")], str, "The return value.")])))
+        >>> print(str(PromptTemplate([Function("foo", "The foo function.", [Argument(name="a", type=int, description="The first argument.")], str, "The return value.")])))
         Function:
         def foo(a: int) -> The return value.:
             \"\"\"
@@ -211,7 +210,7 @@ User Query: {{user_query}}"""
         Returns:
             str: The formatted string representation of the prompt template.
 
-        >>> print(PromptTemplate([Function("foo", "The foo function.", [Argument("a", int, "The first argument.")], str, "The return value.")]).format("pass foo to a string 'bar'"))
+        >>> print(PromptTemplate([Function("foo", "The foo function.", [Argument(name="a", type=int, description="The first argument.")], str, "The return value.")]).format("pass foo to a string 'bar'"))
         Function:
         def foo(a: int) -> The return value.:
             \"\"\"
@@ -235,7 +234,7 @@ User Query: {{user_query}}"""
         Args:
             user_query (str): The user query.
 
-        >>> print(PromptTemplate([Function("foo", "The foo function.", [Argument("a", int, "The first argument.")], str, "The return value.")]).render("pass foo to a string 'bar'"))
+        >>> print(PromptTemplate([Function("foo", "The foo function.", [Argument(name="a", type=int, description="The first argument.")], str, "The return value.")]).render("pass foo to a string 'bar'"))
         Function:
         def foo(a: int) -> The return value.:
             \"\"\"
