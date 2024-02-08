@@ -120,20 +120,12 @@ class Argument(BaseModel):
             return f"{self.name}: {self.type.__name__} = {self.default}"
 
 
-class Function:
-    def __init__(
-        self,
-        name: str,
-        description: str,
-        arguments: Sequence[Argument],
-        return_type: Type[Any],
-        return_description: str,
-    ) -> None:
-        self._name = name
-        self._description = description
-        self._arguments = arguments
-        self._return_type = return_type
-        self._return_description = return_description
+class Function(BaseModel):
+    name: str
+    description: str
+    arguments: Sequence[Argument]
+    return_type: Type[Any]
+    return_description: str
 
     def __str__(self) -> str:
         """
@@ -142,7 +134,7 @@ class Function:
         Returns:
             str: The string representation of the function.
 
-        >>> print(str(Function("foo", "The foo function.", [Argument(name="a", type=int, description="The first argument.")], str, "The return value.")))
+        >>> print(str(Function(name="foo", description="The foo function.", arguments=[Argument(name="a", type=int, description="The first argument.")], return_type=str, return_description="The return value.")))
         Function:
         def foo(a: int) -> The return value.:
             \"\"\"
@@ -152,21 +144,21 @@ class Function:
                 a (int): The first argument.
         <BLANKLINE>
             Returns:
-                self._return_type: The return value.
+                str: The return value.
             \"\"\"
         <BLANKLINE>
         """  # noqa: E501
         return f"""\
 Function:
-def {self._name}({', '.join([argument.signature for argument in self._arguments])}) -> {self._return_description}:
+def {self.name}({', '.join([argument.signature for argument in self.arguments])}) -> {self.return_description}:
     \"\"\"
-    {self._description}
+    {self.description}
 
     Args:
-        {chr(10).join([str(argument) for argument in self._arguments])}
+        {chr(10).join([str(argument) for argument in self.arguments])}
 
     Returns:
-        self._return_type: {self._return_description}
+        {self.return_type.__name__}: {self.return_description}
     \"\"\"
 """
 
@@ -182,7 +174,7 @@ class PromptTemplate:
         Returns:
             str: The string representation of the prompt template.
 
-        >>> print(str(PromptTemplate([Function("foo", "The foo function.", [Argument(name="a", type=int, description="The first argument.")], str, "The return value.")])))
+        >>> print(str(PromptTemplate([Function(name="foo", description="The foo function.", arguments=[Argument(name="a", type=int, description="The first argument.")], return_type=str, return_description="The return value.")])))
         Function:
         def foo(a: int) -> The return value.:
             \"\"\"
@@ -192,7 +184,7 @@ class PromptTemplate:
                 a (int): The first argument.
         <BLANKLINE>
             Returns:
-                self._return_type: The return value.
+                str: The return value.
             \"\"\"
         <BLANKLINE>
         User Query: {user_query}
@@ -210,7 +202,7 @@ User Query: {{user_query}}"""
         Returns:
             str: The formatted string representation of the prompt template.
 
-        >>> print(PromptTemplate([Function("foo", "The foo function.", [Argument(name="a", type=int, description="The first argument.")], str, "The return value.")]).format("pass foo to a string 'bar'"))
+        >>> print(PromptTemplate([Function(name="foo", description="The foo function.", arguments=[Argument(name="a", type=int, description="The first argument.")], return_type=str, return_description="The return value.")]).format("pass foo to a string 'bar'"))
         Function:
         def foo(a: int) -> The return value.:
             \"\"\"
@@ -220,7 +212,7 @@ User Query: {{user_query}}"""
                 a (int): The first argument.
         <BLANKLINE>
             Returns:
-                self._return_type: The return value.
+                str: The return value.
             \"\"\"
         <BLANKLINE>
         User Query: pass foo to a string 'bar'
@@ -234,7 +226,7 @@ User Query: {{user_query}}"""
         Args:
             user_query (str): The user query.
 
-        >>> print(PromptTemplate([Function("foo", "The foo function.", [Argument(name="a", type=int, description="The first argument.")], str, "The return value.")]).render("pass foo to a string 'bar'"))
+        >>> print(PromptTemplate([Function(name="foo", description="The foo function.", arguments=[Argument(name="a", type=int, description="The first argument.")], return_type=str, return_description="The return value.")]).render("pass foo to a string 'bar'"))
         Function:
         def foo(a: int) -> The return value.:
             \"\"\"
@@ -244,7 +236,7 @@ User Query: {{user_query}}"""
                 a (int): The first argument.
         <BLANKLINE>
             Returns:
-                self._return_type: The return value.
+                str: The return value.
             \"\"\"
         <BLANKLINE>
         User Query: pass foo to a string 'bar'<human_end>
