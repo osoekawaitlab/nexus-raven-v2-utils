@@ -75,9 +75,10 @@ class Output(BaseModel):
                 call += chunk[len("Call: ") :]
             else:
                 call += f"\n{chunk}"
+        call = call.strip()
         if not call or not thought:
             raise ParseError(output)
-        return cls(call=call.strip(), thought=thought)
+        return cls(call=call, thought=thought)
 
 
 class Argument(BaseModel):
