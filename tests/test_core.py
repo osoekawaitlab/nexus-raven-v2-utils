@@ -21,3 +21,14 @@ def test_output_parse_raises_parse_error_when_output_is_invalid_2() -> None:
         assert str(e) == "Call:  \nThought: b"
     else:
         assert False
+
+
+def test_output_parse_raises_parse_error_when_empty_output() -> None:
+
+    output = ""
+    try:
+        Output.parse(output)
+    except ParseError as e:
+        assert str(e) == ""
+    else:
+        assert False
