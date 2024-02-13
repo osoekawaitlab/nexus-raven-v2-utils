@@ -1,5 +1,5 @@
 from collections.abc import Sequence
-from typing import Any, Optional, Type, Callable
+from typing import Any, Callable, Optional, Type
 
 from pydantic import BaseModel as PydanticBaseModel
 
@@ -166,8 +166,8 @@ def {self.name}({', '.join([argument.signature for argument in self.arguments])}
 """
 
     @classmethod
-    def from_function(cls, function: Callable[[Any], Any]) -> "Function":
-        ...
+    def from_function(cls, function: Callable[[Any], Any]) -> "Function": ...
+
 
 class PromptTemplate(BaseModel):
     functions: Sequence[Function]

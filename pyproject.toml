@@ -84,6 +84,8 @@ legacy_tox_ini = """
     envlist = py310
 
     [testenv]
+    setenv =
+        VIRTUALENV_PIP = 24.0
     deps =
         -e .[dev]
     commands = 
