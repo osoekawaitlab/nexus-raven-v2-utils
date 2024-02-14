@@ -139,7 +139,7 @@ class Function(BaseModel):
 
         >>> print(str(Function(name="foo", description="The foo function.", arguments=[Argument(name="a", type=int, description="The first argument.")], return_type=str, return_description="The return value.")))
         Function:
-        def foo(a: int) -> The return value.:
+        def foo(a: int) -> str:
             \"\"\"
             The foo function.
         <BLANKLINE>
@@ -153,7 +153,7 @@ class Function(BaseModel):
         """  # noqa: E501
         return f"""\
 Function:
-def {self.name}({', '.join([argument.signature for argument in self.arguments])}) -> {self.return_description}:
+def {self.name}({', '.join([argument.signature for argument in self.arguments])}) -> {self.return_type.__name__}:
     \"\"\"
     {self.description}
 
@@ -181,7 +181,7 @@ class PromptTemplate(BaseModel):
 
         >>> print(str(PromptTemplate(functions=[Function(name="foo", description="The foo function.", arguments=[Argument(name="a", type=int, description="The first argument.")], return_type=str, return_description="The return value.")])))
         Function:
-        def foo(a: int) -> The return value.:
+        def foo(a: int) -> str:
             \"\"\"
             The foo function.
         <BLANKLINE>
@@ -209,7 +209,7 @@ User Query: {{user_query}}"""
 
         >>> print(PromptTemplate(functions=[Function(name="foo", description="The foo function.", arguments=[Argument(name="a", type=int, description="The first argument.")], return_type=str, return_description="The return value.")]).format("pass foo to a string 'bar'"))
         Function:
-        def foo(a: int) -> The return value.:
+        def foo(a: int) -> str:
             \"\"\"
             The foo function.
         <BLANKLINE>
@@ -233,7 +233,7 @@ User Query: {{user_query}}"""
 
         >>> print(PromptTemplate(functions=[Function(name="foo", description="The foo function.", arguments=[Argument(name="a", type=int, description="The first argument.")], return_type=str, return_description="The return value.")]).render("pass foo to a string 'bar'"))
         Function:
-        def foo(a: int) -> The return value.:
+        def foo(a: int) -> str:
             \"\"\"
             The foo function.
         <BLANKLINE>
