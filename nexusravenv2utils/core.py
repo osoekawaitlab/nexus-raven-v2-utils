@@ -1,3 +1,4 @@
+import re
 from collections.abc import Sequence
 from typing import Any, Callable, Optional, Type
 
@@ -166,7 +167,62 @@ def {self.name}({', '.join([argument.signature for argument in self.arguments])}
 """
 
     @classmethod
-    def from_function(cls, function: Callable[[Any], Any]) -> "Function": ...
+    def from_function(cls, function: Callable[[Any], Any]) -> "Function":
+        """
+        Create a function from a function.
+
+        Args:
+            function (Callable[[Any], Any]): The function.
+
+        Returns:
+            Function: The function.
+
+        >>> def foo(a: int) -> str:
+        ...     \"\"\"The foo function.
+        ...
+        ...     Args:
+        ...         a (int): The first argument.
+        ...
+        ...     Returns:
+        ...         str: The return value.
+        ...     \"\"\"
+        ...     return "bar"
+        >>> print(Function.from_function(foo))
+        Function:
+        def foo(a: int) -> str:
+            \"\"\"
+            The foo function.
+        <BLANKLINE>
+            Args:
+                a (int): The first argument.
+        <BLANKLINE>
+            Returns:
+                str: The return value.
+            \"\"\"
+        <BLANKLINE>
+        """
+        parameters = function.__code__.co_varnames[: function.__code__.co_argcount]
+        docstring_lines = function.__doc__.split(chr(10))
+        return_description = ""
+        for i, line in enumerate(docstring_lines):
+            if re.match(r"\s*Returns:", line) and i + 1 < len(docstring_lines):
+                return_description = docstring_lines[i + 1].split(": ")[-1]
+                break
+        return cls(
+            name=function.__name__,
+            description=function.__doc__.split(chr(10))[0],
+            arguments=[
+                Argument(
+                    name=parameter,
+                    type=int,
+                    description="The first argument.",
+                    default=None,
+                )
+                for parameter in parameters
+            ],
+            return_type=function.__annotations__["return"],
+            return_description=return_description,
+        )
 
 
 class PromptTemplate(BaseModel):
