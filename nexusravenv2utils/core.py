@@ -203,11 +203,20 @@ def {self.name}({', '.join([argument.signature for argument in self.arguments])}
         """
         parameters = function.__code__.co_varnames[: function.__code__.co_argcount]
         docstring_lines = function.__doc__.split(chr(10))
+        arg_description_map = {}
         return_description = ""
         for i, line in enumerate(docstring_lines):
             if re.match(r"\s*Returns:", line) and i + 1 < len(docstring_lines):
                 return_description = docstring_lines[i + 1].split(": ")[-1]
                 break
+        parsing_args = False
+        for line in docstring_lines:
+            if re.match(r"\s*Args:", line):
+                parsing_args = True
+            elif parsing_args and re.match(r"\s*\w+ \(\w+\):", line):
+                arg_description_map[line.strip().split(" ")[0]] = line.split(": ")[-1]
+            elif parsing_args and re.match(r"\s*", line):
+                parsing_args = False
         return cls(
             name=function.__name__,
             description=function.__doc__.split(chr(10))[0],
@@ -215,7 +224,7 @@ def {self.name}({', '.join([argument.signature for argument in self.arguments])}
                 Argument(
                     name=parameter,
                     type=int,
-                    description="The first argument.",
+                    description=arg_description_map.get(parameter, ""),
                     default=None,
                 )
                 for parameter in parameters
