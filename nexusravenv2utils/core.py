@@ -202,7 +202,7 @@ def {self.name}({', '.join([argument.signature for argument in self.arguments])}
         <BLANKLINE>
         """
         parameters = function.__code__.co_varnames[: function.__code__.co_argcount]
-        docstring_lines = function.__doc__.split(chr(10))
+        docstring_lines = (function.__doc__ or "").split(chr(10))
         arg_description_map = {}
         return_description = ""
         for i, line in enumerate(docstring_lines):
@@ -219,7 +219,7 @@ def {self.name}({', '.join([argument.signature for argument in self.arguments])}
                 parsing_args = False
         return cls(
             name=function.__name__,
-            description=function.__doc__.split(chr(10))[0],
+            description=docstring_lines[0],
             arguments=[
                 Argument(
                     name=parameter,
