@@ -85,7 +85,7 @@ class Output(BaseModel):
 class Argument(BaseModel):
     name: str
     type: Type[Any]
-    description: str
+    description: Optional[str] = None
     default: Optional[Any] = None
 
     def __str__(self) -> str:
@@ -99,11 +99,16 @@ class Argument(BaseModel):
         'a (int): The first argument.'
         >>> str(Argument(name="b", type=int, description="The second argument.", default=1))
         'b (:obj:`int`, optional): The second argument.'
+        >>> str(Argument(name="nodescription", type=int))
+        'nodescription (int): (no description provided)'
         """
         if self.default is None:
-            return f"{self.name} ({self.type.__name__}): {self.description}"
+            return f"{self.name} ({self.type.__name__}): {self.description or '(no description provided)'}"
         else:
-            return f"{self.name} (:obj:`{self.type.__name__}`, optional): {self.description}"
+            return (
+                f"{self.name} (:obj:`{self.type.__name__}`, optional):"
+                f" {self.description or '(no description provided)'}"
+            )
 
     @property
     def signature(self) -> str:
