@@ -84,7 +84,7 @@ class Output(BaseModel):
 
 class Argument(BaseModel):
     name: str
-    type: Type[Any]
+    type: Optional[Type[Any]] = None
     description: Optional[str] = None
     default: Optional[Any] = None
 
@@ -101,8 +101,12 @@ class Argument(BaseModel):
         'b (:obj:`int`, optional): The second argument.'
         >>> str(Argument(name="nodescription", type=int))
         'nodescription (int): (no description provided)'
+        >>> str(Argument(name="notypenodescription"))
+        'notypenodescription: (no description provided)'
         """
         if self.default is None:
+            if self.type is None:
+                return f"{self.name}: {self.description or '(no description provided)'}"
             return f"{self.name} ({self.type.__name__}): {self.description or '(no description provided)'}"
         else:
             return (
