@@ -103,12 +103,16 @@ class Argument(BaseModel):
         'nodescription (int): (no description provided)'
         >>> str(Argument(name="notypenodescription"))
         'notypenodescription: (no description provided)'
+        >>> str(Argument(name="notypewithdefault", default=1))
+        'notypewithdefault (optional): (no description provided)'
         """
         if self.default is None:
             if self.type is None:
                 return f"{self.name}: {self.description or '(no description provided)'}"
             return f"{self.name} ({self.type.__name__}): {self.description or '(no description provided)'}"
         else:
+            if self.type is None:
+                return f"{self.name} (optional):" f" {self.description or '(no description provided)'}"
             return (
                 f"{self.name} (:obj:`{self.type.__name__}`, optional):"
                 f" {self.description or '(no description provided)'}"
