@@ -130,11 +130,17 @@ class Argument(BaseModel):
         'a: int'
         >>> Argument(name="b", type=int, description="The second argument.", default=1).signature
         'b: int = 1'
+        >>> Argument(name="nodescription", type=int).signature
+        'nodescription: int'
+        >>> Argument(name="notypenodescription").signature
+        'notypenodescription'
+        >>> Argument(name="notypewithdefault", default=1).signature
+        'notypewithdefault = 1'
         """
-        if self.default is None:
-            return f"{self.name}: {self.type.__name__}"
-        else:
-            return f"{self.name}: {self.type.__name__} = {self.default}"
+        return (
+            f"{self.name}{f': {self.type.__name__}' if self.type else ''}"
+            f"{f' = {self.default}' if self.default is not None else ''}"
+        )
 
 
 class Function(BaseModel):
