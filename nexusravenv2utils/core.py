@@ -148,7 +148,7 @@ class Function(BaseModel):
     description: str
     arguments: Sequence[Argument]
     return_type: Type[Any]
-    return_description: str
+    return_description: Optional[str] = None
 
     def __str__(self) -> str:
         """
