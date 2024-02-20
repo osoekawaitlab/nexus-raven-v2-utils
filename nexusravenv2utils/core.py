@@ -181,7 +181,7 @@ def {self.name}({', '.join([argument.signature for argument in self.arguments])}
         {chr(10).join([str(argument) for argument in self.arguments])}
 
     Returns:
-        {self.return_type.__name__}: {self.return_description}
+        {self.return_type.__name__}: {self.return_description or '(no description provided)'}
     \"\"\"
 """
 

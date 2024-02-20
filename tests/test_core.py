@@ -1,4 +1,4 @@
-from nexusravenv2utils.core import Output, ParseError
+from nexusravenv2utils.core import Argument, Function, Output, ParseError
 
 
 def test_output_parse_raises_parse_error_when_output_is_invalid() -> None:
@@ -50,3 +50,30 @@ Here are some reasons why your order fulfillment needs an outsourcing partner:
         assert str(e) == output
     else:
         assert False
+
+
+def test_function_no_return_description() -> None:
+    assert (
+        str(
+            Function(
+                name="name",
+                description="the description",
+                arguments=[Argument(name="a")],
+                return_type=int,
+                return_description=None,
+            )
+        )
+        == """\
+Function:
+def name(a) -> int:
+    \"\"\"
+    the description
+
+    Args:
+        a: (no description provided)
+
+    Returns:
+        int: (no description provided)
+    \"\"\"
+"""
+    )
