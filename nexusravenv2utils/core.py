@@ -171,19 +171,27 @@ class Function(BaseModel):
             \"\"\"
         <BLANKLINE>
         """  # noqa: E501
-        return f"""\
+        return (
+            f"""\
 Function:
 def {self.name}({', '.join([argument.signature for argument in self.arguments])}) -> {self.return_type.__name__}:
     \"\"\"
     {self.description}
-
+"""
+            + (
+                f"""
     Args:
         {chr(10).join([str(argument) for argument in self.arguments])}
-
+"""
+                if len(self.arguments) > 0
+                else ""
+            )
+            + f"""
     Returns:
         {self.return_type.__name__}: {self.return_description or '(no description provided)'}
     \"\"\"
 """
+        )
 
     @classmethod
     def from_function(cls, function: Callable[[Any], Any]) -> "Function":
