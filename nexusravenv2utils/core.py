@@ -147,8 +147,11 @@ class Function(BaseModel):
     name: str
     description: str
     arguments: Sequence[Argument]
-    return_type: Type[Any]
+    return_type: Optional[Type[Any]] = None
     return_description: Optional[str] = None
+
+    def get_return_type_str(self) -> str:
+        return "Any" if self.return_type is None else self.return_type.__name__
 
     def __str__(self) -> str:
         """
@@ -174,7 +177,7 @@ class Function(BaseModel):
         return (
             f"""\
 Function:
-def {self.name}({', '.join([argument.signature for argument in self.arguments])}) -> {self.return_type.__name__}:
+def {self.name}({', '.join([argument.signature for argument in self.arguments])}) -> {self.get_return_type_str()}:
     \"\"\"
     {self.description}
 """
@@ -188,7 +191,7 @@ def {self.name}({', '.join([argument.signature for argument in self.arguments])}
             )
             + f"""
     Returns:
-        {self.return_type.__name__}: {self.return_description or '(no description provided)'}
+        {self.get_return_type_str()}: {self.return_description or '(no description provided)'}
     \"\"\"
 """
         )
