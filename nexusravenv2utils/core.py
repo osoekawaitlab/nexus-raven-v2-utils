@@ -88,6 +88,9 @@ class Argument(BaseModel):
     description: Optional[str] = None
     default: Optional[Any] = None
 
+    def get_description_str(self) -> str:
+        return self.description or "(no description provided)"
+
     def __str__(self) -> str:
         """
         Return the string representation of the argument.
@@ -108,15 +111,12 @@ class Argument(BaseModel):
         """
         if self.default is None:
             if self.type is None:
-                return f"{self.name}: {self.description or '(no description provided)'}"
-            return f"{self.name} ({self.type.__name__}): {self.description or '(no description provided)'}"
+                return f"{self.name}: {self.get_description_str()}"
+            return f"{self.name} ({self.type.__name__}): {self.get_description_str()}"
         else:
             if self.type is None:
-                return f"{self.name} (optional):" f" {self.description or '(no description provided)'}"
-            return (
-                f"{self.name} (:obj:`{self.type.__name__}`, optional):"
-                f" {self.description or '(no description provided)'}"
-            )
+                return f"{self.name} (optional):" f" {self.get_description_str()}"
+            return f"{self.name} (:obj:`{self.type.__name__}`, optional):" f" {self.get_description_str()}"
 
     @property
     def signature(self) -> str:
