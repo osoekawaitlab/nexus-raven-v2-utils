@@ -127,3 +127,30 @@ def name(a) -> Any:
     \"\"\"
 """
     )
+
+
+def test_function_no_description() -> None:
+    assert (
+        str(
+            Function(
+                name="name",
+                description=None,
+                arguments=[Argument(name="a")],
+                return_type=int,
+                return_description="the return description",
+            )
+        )
+        == """\
+Function:
+def name(a) -> int:
+    \"\"\"
+    (no description provided)
+
+    Args:
+        a: (no description provided)
+
+    Returns:
+        int: the return description
+    \"\"\"
+"""
+    )

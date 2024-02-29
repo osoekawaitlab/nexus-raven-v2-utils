@@ -145,7 +145,7 @@ class Argument(BaseModel):
 
 class Function(BaseModel):
     name: str
-    description: str
+    description: Optional[str] = None
     arguments: Sequence[Argument]
     return_type: Optional[Type[Any]] = None
     return_description: Optional[str] = None
@@ -179,7 +179,7 @@ class Function(BaseModel):
 Function:
 def {self.name}({', '.join([argument.signature for argument in self.arguments])}) -> {self.get_return_type_str()}:
     \"\"\"
-    {self.description}
+    {self.description or '(no description provided)'}
 """
             + (
                 f"""
