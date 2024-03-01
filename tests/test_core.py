@@ -144,8 +144,6 @@ def test_function_no_description() -> None:
 Function:
 def name(a) -> int:
     \"\"\"
-    (no description provided)
-
     Args:
         a: (no description provided)
 

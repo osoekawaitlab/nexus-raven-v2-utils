@@ -178,9 +178,7 @@ class Function(BaseModel):
             f"""\
 Function:
 def {self.name}({', '.join([argument.signature for argument in self.arguments])}) -> {self.get_return_type_str()}:
-    \"\"\"
-    {self.description or '(no description provided)'}
-"""
+    \"\"\"{(chr(10) + "    " + self.description + chr(10)) if self.description else ""}"""
             + (
                 f"""
     Args:
