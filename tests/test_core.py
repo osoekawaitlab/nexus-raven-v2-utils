@@ -1,4 +1,13 @@
+import pytest
+
 from nexusravenv2utils.core import Argument, Function, Output, ParseError
+
+from .fixtures import ArgumentTestCase, arguments
+
+
+@pytest.mark.parametrize("argument", arguments)
+def test_argument_str(argument: ArgumentTestCase) -> None:
+    assert str(argument.argument) == argument.string
 
 
 def test_output_parse_raises_parse_error_when_output_is_invalid() -> None:
@@ -70,7 +79,7 @@ def name(a) -> int:
     the description
 
     Args:
-        a: (no description provided)
+        a
 
     Returns:
         int: (no description provided)
@@ -120,7 +129,7 @@ def name(a) -> Any:
     the description
 
     Args:
-        a: (no description provided)
+        a
 
     Returns:
         Any: the return description
@@ -145,7 +154,7 @@ Function:
 def name(a) -> int:
     \"\"\"
     Args:
-        a: (no description provided)
+        a
 
     Returns:
         int: the return description

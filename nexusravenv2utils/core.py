@@ -88,9 +88,6 @@ class Argument(BaseModel):
     description: Optional[str] = None
     default: Optional[Any] = None
 
-    def get_description_str(self) -> str:
-        return self.description or "(no description provided)"
-
     def __str__(self) -> str:
         """
         Return the string representation of the argument.
@@ -103,20 +100,26 @@ class Argument(BaseModel):
         >>> str(Argument(name="b", type=int, description="The second argument.", default=1))
         'b (:obj:`int`, optional): The second argument.'
         >>> str(Argument(name="nodescription", type=int))
-        'nodescription (int): (no description provided)'
+        'nodescription (int)'
         >>> str(Argument(name="notypenodescription"))
-        'notypenodescription: (no description provided)'
+        'notypenodescription'
         >>> str(Argument(name="notypewithdefault", default=1))
-        'notypewithdefault (optional): (no description provided)'
+        'notypewithdefault (optional)'
         """
         if self.default is None:
             if self.type is None:
-                return f"{self.name}: {self.get_description_str()}"
-            return f"{self.name} ({self.type.__name__}): {self.get_description_str()}"
+                if self.description is None:
+                    return self.name
+                return f"{self.name}: {self.description}"
+            if self.description is None:
+                return f"{self.name} ({self.type.__name__})"
+            return f"{self.name} ({self.type.__name__}): {self.description}"
         else:
             if self.type is None:
-                return f"{self.name} (optional):" f" {self.get_description_str()}"
-            return f"{self.name} (:obj:`{self.type.__name__}`, optional):" f" {self.get_description_str()}"
+                if self.description is None:
+                    return f"{self.name} (optional)"
+                return f"{self.name} (optional):" f" {self.description}"
+            return f"{self.name} (:obj:`{self.type.__name__}`, optional):" f" {self.description}"
 
     @property
     def signature(self) -> str:
