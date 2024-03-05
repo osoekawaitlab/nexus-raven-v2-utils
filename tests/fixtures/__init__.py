@@ -20,4 +20,10 @@ arguments = [
         signature="a: int",
         comment="no description no default",
     ),
+    ArgumentTestCase(
+        argument=Argument(name="a", description="the description"),
+        string="a: the description",
+        signature="a",
+        comment="no type no default",
+    ),
 ]
