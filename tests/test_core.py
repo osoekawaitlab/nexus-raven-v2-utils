@@ -10,6 +10,11 @@ def test_argument_str(argument: ArgumentTestCase) -> None:
     assert str(argument.argument) == argument.string
 
 
+@pytest.mark.parametrize("argument", arguments)
+def test_signature(argument: ArgumentTestCase) -> None:
+    assert argument.argument.signature == argument.signature
+
+
 def test_output_parse_raises_parse_error_when_output_is_invalid() -> None:
 
     output = "Invalid output"
