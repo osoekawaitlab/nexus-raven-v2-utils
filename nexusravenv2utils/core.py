@@ -104,7 +104,7 @@ class Argument(BaseModel):
         >>> str(Argument(name="notypenodescription"))
         'notypenodescription'
         >>> str(Argument(name="notypewithdefault", default=1))
-        'notypewithdefault (optional)'
+        'notypewithdefault (:obj:`Any`, optional)'
         """
         if self.default is None:
             if self.type is None:
@@ -117,8 +117,10 @@ class Argument(BaseModel):
         else:
             if self.type is None:
                 if self.description is None:
-                    return f"{self.name} (optional)"
-                return f"{self.name} (optional):" f" {self.description}"
+                    return f"{self.name} (:obj:`Any`, optional)"
+                return f"{self.name} (:obj:`Any`, optional):" f" {self.description}"
+            if self.description is None:
+                return f"{self.name} (:obj:`{self.type.__name__}`, optional)"
             return f"{self.name} (:obj:`{self.type.__name__}`, optional):" f" {self.description}"
 
     @property

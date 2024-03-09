@@ -28,7 +28,7 @@ arguments = [
     ),
     ArgumentTestCase(
         argument=Argument(name="a", default=1),
-        string="a (optional)",
+        string="a (:obj:`Any`, optional)",
         signature="a = 1",
         comment="no type no description",
     ),
@@ -37,5 +37,11 @@ arguments = [
         string="a (int): the description",
         signature="a: int",
         comment="no default",
+    ),
+    ArgumentTestCase(
+        argument=Argument(name="a", type=int, default=1),
+        string="a (:obj:`int`, optional)",
+        signature="a: int = 1",
+        comment="no description",
     ),
 ]
